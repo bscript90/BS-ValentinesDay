@@ -50,46 +50,49 @@ RegisterNetEvent('BS-ValentinesDay:client:selectPlayer',function(item,name)
     SetNuiFocus(true,true)    
     curName = name
     curItem = item
-    
-    Citizen.CreateThread(function()
-        SendNUIMessage({
-            action = "openPlayerPositions",
-        })
-        while selectPlayer do
-            local players = GetActivePlayers()
-            local playersPositions = {}
-            local orjCoords = GetEntityCoords(PlayerPedId())
-            for i = 1, #players do
-                local id = players[i]
-                local ped = GetPlayerPed(id)
-                if ped ~= PlayerPedId() then
-                    local coords = GetEntityCoords(ped)
-                    if #(coords - orjCoords) < 15.0 then
-                        local onscreen, x, y = GetScreenCoordFromWorldCoord(coords.x,coords.y,coords.z) 
-                        if onscreen then
-                            x = x * 100
-                            y = y * 100
-                            playersPositions[#playersPositions+1] = {
-                                value = GetPlayerServerId(id),
-                                x = x,
-                                y = y
-                            }
+    if Config.SelectPlayer then
+        Citizen.CreateThread(function()
+            SendNUIMessage({
+                action = "openPlayerPositions",
+            })
+            while selectPlayer do
+                local players = GetActivePlayers()
+                local playersPositions = {}
+                local orjCoords = GetEntityCoords(PlayerPedId())
+                for i = 1, #players do
+                    local id = players[i]
+                    local ped = GetPlayerPed(id)
+                    if ped ~= PlayerPedId() then
+                        local coords = GetEntityCoords(ped)
+                        if #(coords - orjCoords) < 15.0 then
+                            local onscreen, x, y = GetScreenCoordFromWorldCoord(coords.x,coords.y,coords.z) 
+                            if onscreen then
+                                x = x * 100
+                                y = y * 100
+                                playersPositions[#playersPositions+1] = {
+                                    value = GetPlayerServerId(id),
+                                    x = x,
+                                    y = y
+                                }
+                            end
                         end
                     end
                 end
+             
+                SendNUIMessage({
+                    action = "setPlayersPositions",
+                    players = playersPositions,
+                })
+                Wait(1000)
             end
-         
             SendNUIMessage({
                 action = "setPlayersPositions",
-                players = playersPositions,
+                players = {},
             })
-            Wait(1000)
-        end
-        SendNUIMessage({
-            action = "setPlayersPositions",
-            players = {},
-        })
-    end)
+        end)
+    else
+        TriggerServerEvent('BS-ValentinesDay:server:getPlayerName',curItem,curName,GetPlayerServerId(PlayerId()))
+    end
 end)
 
 RegisterNUICallback('selectPlayer',function(data)

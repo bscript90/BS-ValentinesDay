@@ -1,6 +1,7 @@
 Config = {}
 Config.Framework = "VORP" -- RSG
 
+Config.SelectPlayer = true -- If you set it to false, you will be able to write letters without choosing a player
 Config.GiveAnimation = true
 Config.Tasks = {
     'Say you love me in 5 different languages.',
