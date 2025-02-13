@@ -22,7 +22,10 @@ BSRegisterUsableItem('lovewheelspin',function(data)
 end)
 
 RegisterNetEvent('BS-ValentinesDay:server:getPlayerName',function(item,from,toid)
-    local to = BSGetName(toid)
+    local to = "A mysterious person"
+    if Config.SelectPlayer then
+        to = BSGetName(toid)
+    end
     TriggerClientEvent('BS-ValentinesDay:client:openEnvelope',source,item,from,to,false)
 end)
 
